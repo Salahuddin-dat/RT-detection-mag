@@ -1,4 +1,5 @@
 # Allow statements and log messages to immediately appear in the Knative logs
+FROM python:3
 ENV PYTHONUNBUFFERED True
 # port
 EXPOSE 8080
