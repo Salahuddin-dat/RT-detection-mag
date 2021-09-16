@@ -1,12 +1,15 @@
 import cv2
-from tensorflow.keras.models import load_model
 import numpy as np
+from tflite_class import TfLiteModel
 
-# define and load the models
+# define , load  models
 face_detect = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-mask_model = load_model("face_mask_detection.h5")
-age_model = load_model('weights.28-3.73.hdf5')
+mask_model_path = "mask_model.tflite"
+a_g_model_path = "age_gender_model.tflite"
 not_found = cv2.imread('notfound.jpg')
+
+mask_model = TfLiteModel(mask_model_path)
+a_g_model = TfLiteModel(a_g_model_path)
 
 
 class GenerateVideo(object):
@@ -26,22 +29,21 @@ class GenerateVideo(object):
             for (x, y, w, h) in faces:
                 # face images processing
                 face_img = img[y:y + h, x:x + w]
-                face_img1 = cv2.resize(face_img, (224, 224))
-                face_img1 = face_img1[np.newaxis]
-                face_img2 = cv2.resize(face_img, (64, 64))
-                face_img2 = face_img2[np.newaxis]
+                face_img1 = input_process(face_img)
+
                 # predict mask / no mask
-                mask_pred = mask_model.predict(face_img1)[0][0]
+
+                mask_pred = mask_model.model_predict(face_img1)
 
                 if mask_pred > 0:  # no mask
-                    result = age_model.predict(face_img2)
-                    pred_gender = result[0]
-                    if pred_gender[0][0] > 0.5:
+                    face_img2 = input_process(face_img, shape=(64, 64))
+                    gender_pred, age_pred = a_g_model.model_predict(face_img2)
+                    if gender_pred[0][0] > 0.5:
                         gender = 'Female'
                     else:
                         gender = 'Male'
                     ages = np.arange(0, 101).reshape(101, 1)
-                    age_pred = result[1].dot(ages).flatten()
+                    age_pred = age_pred.dot(ages).flatten()
                     mask_pred = 'No Mask'
                     color = (0, 0, 255)
                     text = mask_pred + '  ' + gender + '  ' + str(int(age_pred))
@@ -54,3 +56,10 @@ class GenerateVideo(object):
             img = not_found
         _, jpeg = cv2.imencode('.jpg', img)
         return jpeg.tobytes()
+
+
+def input_process(image, shape=(224, 224)):
+    out_image = cv2.resize(image, shape)
+    out_image = out_image[np.newaxis]
+    out_image = np.array(out_image, dtype=np.float32)
+    return out_image
