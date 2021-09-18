@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from tflite_class import TfLiteModel
 
-# define , load  models
+# define , load models
 face_detect = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 mask_model_path = "mask_model.tflite"
 a_g_model_path = "age_gender_model.tflite"
@@ -21,7 +21,7 @@ class GenerateVideo(object):
 
     # returns camera frames along with bounding boxes and predictions
     def get_frame(self):
-        """
+
         _, img = self.video.read()
         try:
             # face detection
@@ -56,14 +56,12 @@ class GenerateVideo(object):
         except IOError:
             img = not_found
         _, jpeg = cv2.imencode('.jpg', img)
-
-        """
-        _, jpeg = cv2.imencode('.jpg', not_found)
+        #_, jpeg = cv2.imencode('.jpg', not_found)
         return jpeg.tobytes()
+
 
 def input_process(image, shape=(224, 224)):
     out_image = cv2.resize(image, shape)
     out_image = out_image[np.newaxis]
     out_image = np.array(out_image, dtype=np.float32)
     return out_image
-

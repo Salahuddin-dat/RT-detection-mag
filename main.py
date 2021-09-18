@@ -14,9 +14,9 @@ def index():
     return render_template('index.html')
 
 
-def gen(camera):
+def gen(GenerateVideo):
     while True:
-        frame = camera.get_frame()
+        frame = GenerateVideo.get_frame()
         yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
 
