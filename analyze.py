@@ -60,7 +60,6 @@ class GenerateVideo(object):
         """
         _, jpeg = cv2.imencode('.jpg', not_found)
 
-
 def input_process(image, shape=(224, 224)):
     out_image = cv2.resize(image, shape)
     out_image = out_image[np.newaxis]
