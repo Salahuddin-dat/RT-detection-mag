@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+import io
+import base64
 from tflite_class import TfLiteModel
 
 # define , load models
@@ -21,42 +23,39 @@ class GenerateVideo(object):
 
     # returns camera frames along with bounding boxes and predictions
     def get_frame(self):
-
+        global jpeg
         _, img = self.video.read()
-        try:
-            # face detection
-            faces = face_detect.detectMultiScale(img, scaleFactor=1.1, minNeighbors=4)
+        # face detection
+        faces = face_detect.detectMultiScale(img, scaleFactor=1.1, minNeighbors=4)
 
-            for (x, y, w, h) in faces:
-                # face images processing
-                face_img = img[y:y + h, x:x + w]
-                face_img1 = input_process(face_img)
+        for (x, y, w, h) in faces:
+            # face images processing
+            face_img = img[y:y + h, x:x + w]
+            face_img1 = input_process(face_img)
 
-                # predict mask / no mask
+            # predict mask / no mask
 
-                mask_pred = mask_model.model_predict(face_img1)
+            mask_pred = mask_model.model_predict(face_img1)
 
-                if mask_pred > 0:  # no mask
-                    face_img2 = input_process(face_img, shape=(64, 64))
-                    gender_pred, age_pred = a_g_model.model_predict(face_img2)
-                    if gender_pred[0][0] > 0.5:
-                        gender = 'Female'
-                    else:
-                        gender = 'Male'
-                    ages = np.arange(0, 101).reshape(101, 1)
-                    age_pred = age_pred.dot(ages).flatten()
-                    mask_pred = 'No Mask'
-                    color = (0, 0, 255)
-                    text = mask_pred + '  ' + gender + '  ' + str(int(age_pred))
+            if mask_pred > 0:  # no mask
+                face_img2 = input_process(face_img, shape=(64, 64))
+                gender_pred, age_pred = a_g_model.model_predict(face_img2)
+                if gender_pred[0][0] > 0.5:
+                    gender = 'Female'
                 else:
-                    text = 'MASK'
-                    color = (0, 255, 0)
-                cv2.putText(img, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
-                cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
-        except IOError:
-            img = not_found
-        _, jpeg = cv2.imencode('.jpg', img)
-        #_, jpeg = cv2.imencode('.jpg', not_found)
+                    gender = 'Male'
+                ages = np.arange(0, 101).reshape(101, 1)
+                age_pred = age_pred.dot(ages).flatten()
+                mask_pred = 'No Mask'
+                color = (0, 0, 255)
+                text = mask_pred + '  ' + gender + '  ' + str(int(age_pred))
+            else:
+                text = 'MASK'
+                color = (0, 255, 0)
+            cv2.putText(img, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+            cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
+            # _, jpeg = cv2.imencode('.jpg', img)
+        _, jpeg = cv2.imencode(".jpg", img)
         return jpeg.tobytes()
 
 
