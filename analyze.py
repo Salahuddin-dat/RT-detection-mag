@@ -56,9 +56,10 @@ class GenerateVideo(object):
         except IOError:
             img = not_found
         _, jpeg = cv2.imencode('.jpg', img)
-        return jpeg.tobytes()
+
         """
         _, jpeg = cv2.imencode('.jpg', not_found)
+        return jpeg.tobytes()
 
 def input_process(image, shape=(224, 224)):
     out_image = cv2.resize(image, shape)
