@@ -23,7 +23,6 @@ class GenerateVideo(object):
 
     # returns camera frames along with bounding boxes and predictions
     def get_frame(self):
-        global jpeg
         _, img = self.video.read()
         # face detection
         faces = face_detect.detectMultiScale(img, scaleFactor=1.1, minNeighbors=4)
@@ -55,6 +54,7 @@ class GenerateVideo(object):
             cv2.putText(img, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
             cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
             # _, jpeg = cv2.imencode('.jpg', img)
+            print(type(img))
         _, jpeg = cv2.imencode(".jpg", img)
         return jpeg.tobytes()
 
