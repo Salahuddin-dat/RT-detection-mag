@@ -20,7 +20,7 @@ class GenerateVideo(object):
         self.video.release()
 
     # returns camera frames along with bounding boxes and predictions
-       def get_frame(self):
+    def get_frame(self):
         """
         _, img = self.video.read()
         try:
@@ -58,9 +58,7 @@ class GenerateVideo(object):
         _, jpeg = cv2.imencode('.jpg', img)
         return jpeg.tobytes()
         """
-        _, jpeg = cv2.imencode('.jpg', img)
-       # _, jpeg = cv2.imencode('.jpg', img) 
-        return jpeg.tobytes()
+        _, jpeg = cv2.imencode('.jpg', not_found)
 
 
 def input_process(image, shape=(224, 224)):
@@ -68,3 +66,4 @@ def input_process(image, shape=(224, 224)):
     out_image = out_image[np.newaxis]
     out_image = np.array(out_image, dtype=np.float32)
     return out_image
+
