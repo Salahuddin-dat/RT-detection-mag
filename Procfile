@@ -1,1 +1,1 @@
-web: gunicorn main.py:app --preload --workers1
+web: gunicorn main:app --preload 
