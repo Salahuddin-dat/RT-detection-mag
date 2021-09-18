@@ -1,7 +1,5 @@
 import cv2
 import numpy as np
-import io
-import base64
 from tflite_class import TfLiteModel
 
 # define , load models
@@ -55,6 +53,11 @@ class GenerateVideo(object):
             cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
             # _, jpeg = cv2.imencode('.jpg', img)
             print(type(img))
+        _, jpeg = cv2.imencode(".jpg", img)
+        return jpeg.tobytes()
+
+    def get_image(self):
+        _, img = self.video.read()
         _, jpeg = cv2.imencode(".jpg", img)
         return jpeg.tobytes()
 

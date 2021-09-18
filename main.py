@@ -16,7 +16,7 @@ def index():
 
 def gen(GenerateVideo):
     while True:
-        frame = GenerateVideo.get_frame()
+        frame = GenerateVideo.get_image()
         yield (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
 
