@@ -21,7 +21,7 @@ class GenerateVideo(object):
 
     # returns camera frames along with bounding boxes and predictions
     def get_frame(self):
-        _, img = self.video.read()
+    '''    _, img = self.video.read()
         try:
             # face detection
             faces = face_detect.detectMultiScale(img, scaleFactor=1.1, minNeighbors=4)
@@ -52,9 +52,9 @@ class GenerateVideo(object):
                     color = (0, 255, 0)
                 cv2.putText(img, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
                 cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
-        except IOError:
-            img = not_found
-        _, jpeg = cv2.imencode('.jpg', img)
+        except IOError:'''
+        img = not_found
+        _, jpeg = cv2.imencode('.jpg', img) 
         return jpeg.tobytes()
 
 
