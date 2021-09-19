@@ -14,7 +14,7 @@ a_g_model = TfLiteModel(a_g_model_path)
 
 class GenerateVideo(object):
     def __init__(self):
-        self.video = cv2.VideoCapture(-1)
+        self.video = cv2.VideoCapture(1)
 
     def __del__(self):
         self.video.release()
@@ -52,7 +52,6 @@ class GenerateVideo(object):
             cv2.putText(img, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
             cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
             # _, jpeg = cv2.imencode('.jpg', img)
-            print(type(img))
         _, jpeg = cv2.imencode(".jpg", img)
         return jpeg.tobytes()
 
@@ -60,10 +59,14 @@ class GenerateVideo(object):
         _, img = self.video.read()
         _, jpeg = cv2.imencode(".jpg", img)
         return jpeg.tobytes()
-
-
+#<camera data-app-id='a-a14a2530-fb06-0139-4de0-0aac5b511429' id='myCamera'></camera>
+#               <img id="bg" src="{{ url_for('video_feed') }}" style="width: 800px;">
 def input_process(image, shape=(224, 224)):
     out_image = cv2.resize(image, shape)
     out_image = out_image[np.newaxis]
     out_image = np.array(out_image, dtype=np.float32)
     return out_image
+
+
+#<script src='//cameratag.com/v14/js/cameratag.js' type='text/javascript'></script>
+#<link rel='stylesheet' href='//cameratag.com/static/14/cameratag.css'>
